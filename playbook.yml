@@ -6,4 +6,4 @@
     - { role: DavidWittman.redis, sudo: true }
     - { role: zzet.rbenv, sudo: true }
     - { role: ANXS.postgresql, sudo: true }
-    - { role: ANXS.nginx, sudo: true }
+    #- { role: ANXS.nginx, sudo: true }
