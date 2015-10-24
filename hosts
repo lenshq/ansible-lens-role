@@ -1,0 +1,8 @@
+[remote:children]
+production
+
+[servers:children]
+production
+
+[production]
+144.76.202.230 nickname=production vm=0 branch=master

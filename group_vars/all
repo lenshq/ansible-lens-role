@@ -1,0 +1,24 @@
+---
+projects_directory: /home/dev/apps
+
+rbenv:
+  env: user
+  version: v0.4.0
+  ruby_version: 2.2.2
+
+users:
+  - { name: dev,  home: /home/dev, shell: /bin/bash, groups: 'dev', comment: "Lens dev user" }
+
+rbenv_users:
+  - dev
+
+# Basic settings
+postgresql_version: 9.4
+postgresql_encoding: 'UTF-8'
+postgresql_locale: 'en_US.UTF-8'
+
+postgresql_admin_user: "postgres"
+postgresql_default_auth_method: "trust"
+
+postgresql_cluster_name: "main"
+postgresql_cluster_reset: false

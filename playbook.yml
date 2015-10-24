@@ -1,0 +1,9 @@
+---
+-
+  hosts: production
+  remote_user: deploy
+  roles:
+    - { role: DavidWittman.redis, sudo: true }
+    - { role: zzet.rbenv, sudo: true }
+    - { role: ANXS.postgresql, sudo: true }
+    - { role: ANXS.nginx, sudo: true }
