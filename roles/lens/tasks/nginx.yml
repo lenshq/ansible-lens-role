@@ -1,0 +1,16 @@
+---
+- name: nginx | update nginx config
+  template: src="nginx/{{ lens_nginx_conf_tpl }}" dest=/etc/nginx/sites-available/lens mode=0755
+  sudo: true
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - nginx
+
+- name: nginx | enable app
+  file: src=/etc/nginx/sites-available/lens dest=/etc/nginx/sites-enabled/lens state=link
+  sudo: true
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - nginx

@@ -1,0 +1,51 @@
+---
+- name: enshure created {{ lens_deploy_user.comment }}
+  user: state=present
+        name={{ lens_deploy_user.name }}
+        home={{ lens_deploy_user.home }} groups={{ lens_deploy_user.groups }}
+        generate_ssh_key=yes
+        comment='{{ lens_deploy_user.comment }}'
+  sudo: true
+  tags:
+    - lens
+
+- name: enshure created {{ lens_deploy_user.comment }} .ssh directory
+  file: state=directory path={{ lens_deploy_user.home }}/.ssh mode=700
+        owner={{ lens_deploy_user.name }} group={{ lens_deploy_user.name }}
+  sudo: true
+  tags:
+    - lens
+
+  # /home/lens/.ssh/authorized_keys
+- name: Upload SSH authorized_keys for {{ lens_deploy_user.comment }}.
+  copy: src=authorized_keys
+        dest={{ lens_deploy_user.home}}/.ssh/authorized_keys
+        owner={{ lens_deploy_user.name }}
+        group={{ lens_deploy_user.name }}
+        mode=0600
+  sudo: true
+  tags:
+    - lens
+
+  # /rest/u/apps/lens
+  # /rest/u/apps/lens/releases
+  # /rest/u/apps/lens/shared
+  # /rest/u/apps/lens/shared/uploads
+  # /rest/u/apps/lens/log
+  # /rest/u/apps/lens/system
+  # /rest/u/apps/lens/pids
+- name: create project directory
+  file: state=directory path={{ item }} owner={{ lens_deploy_user.name }} group="{{ lens_deploy_user.groups }}"
+  with_items:
+    - "{{ lens_web_base_dir }}"
+    - "{{ lens_web_releases_dir }}"
+    - "{{ lens_web_shared_dir }}"
+    - "{{ lens_web_shared_dir }}/config"
+    - "{{ lens_web_bundle_dir }}"
+    - "{{ lens_web_uploads_dir }}"
+    - "{{ lens_web_log_dir }}"
+    - "{{ lens_web_system_dir }}"
+    - "{{ lens_web_pids_dir }}"
+  sudo: true
+  tags:
+    - lens

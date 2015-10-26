@@ -1,0 +1,13 @@
+---
+# handlers file for lens
+- name: restart lens
+  command: /usr/bin/sv restart /etc/service/lens-*
+  sudo: true
+
+- name: stop lens
+  command: /usr/bin/sv stop /etc/service/lens-*
+  sudo: true
+
+- name: start lens
+  command: /usr/bin/sv start /etc/service/lens-*
+  sudo: true

@@ -1,0 +1,45 @@
+---
+- name: runit | create application {{ item }} script directory
+  file: state=directory path=/etc/sv/lens-{{ item.service }}-{{ item.name }} owner=root group=root mode=755
+  sudo: true
+  with_items: lens_runit_services
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - runit
+
+- name: runit | create application {{ item }} script log directory
+  file: state=directory path=/etc/sv/lens-{{ item.service }}-{{ item.name }}/log owner=root group=root mode=755
+  sudo: true
+  with_items: lens_runit_services
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - runit
+
+- name: runit | add application {{ item }} script
+  template: src=runit/lens.{{ item.service }}.run.j2 dest=/etc/sv/lens-{{ item.service }}-{{ item.name }}/run mode=755
+  sudo: true
+  with_items: lens_runit_services
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - runit
+
+- name: runit | add application {{ item }} log run script
+  template: src=runit/lens.log.run.j2 dest=/etc/sv/lens-{{ item.service }}-{{ item.name }}/log/run mode=755
+  sudo: true
+  with_items: lens_runit_services
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - runit
+
+- name: runit | symlink {{ item }} dir to enable runit service
+  file: state=link src=/etc/sv/lens-{{ item.service }}-{{ item.name }} dest=/etc/service/lens-{{ item.service }}-{{ item.name }}
+  sudo: true
+  with_items: lens_runit_services
+  when: (not "{{ lens_env }}" == "development") and (not "{{ lens_env }}" == "test")
+  tags:
+    - lens
+    - runit

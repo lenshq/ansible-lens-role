@@ -1,0 +1,6 @@
+---
+- hosts: production
+  sudo: no
+  remote_user: dev
+  roles:
+    - deploy

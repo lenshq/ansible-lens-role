@@ -3,7 +3,10 @@
   hosts: production
   remote_user: deploy
   roles:
-    - { role: DavidWittman.redis, sudo: true }
     - { role: zzet.rbenv, sudo: true }
+    - { role: DavidWittman.redis, sudo: true }
     - { role: ANXS.postgresql, sudo: true }
-    #- { role: ANXS.nginx, sudo: true }
+    - { role: ANXS.nginx, sudo: true }
+    - { role: gotansible.runit, sudo: true }
+    - { role: lens, sudo: true }
+

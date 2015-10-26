@@ -1,5 +1,5 @@
 ---
-projects_directory: /home/dev/apps
+projects_directory: /srv/www
 
 rbenv:
   env: user
@@ -22,3 +22,23 @@ postgresql_default_auth_method: "trust"
 
 postgresql_cluster_name: "main"
 postgresql_cluster_reset: false
+
+postgresql_ext_install_dev_headers: yes
+
+postgresql_databases:
+  - name: lens_production
+    hstore: yes         # flag to install the hstore extension on this database (yes/no)
+    uuid_ossp: no      # flag to install the uuid-ossp extension on this database (yes/no)
+    citext: no         # flag to install the citext extension on this database (yes/no)
+
+# List of users to be created (optional)
+postgresql_users:
+  - name: dev
+    encrypted: no       # denotes if the password is already encrypted.
+
+# List of user privileges to be applied (optional)
+postgresql_user_privileges:
+  - name: dev                   # user name
+    db: lens_production         # database
+    priv: "ALL"                 # privilege string format: example: INSERT,UPDATE/table:SELECT/anothertable:ALL
+    role_attr_flags: "CREATEDB" # role attribute flags

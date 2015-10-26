@@ -1,0 +1,9 @@
+---
+- name: Setup project dirs
+  include: direcories.yml
+
+- name: Setup NGNIX host
+  include: nginx.yml
+
+- name: Setup runit scripts
+  include: runit.yml

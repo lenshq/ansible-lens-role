@@ -29,20 +29,21 @@
   get_url: url=http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
            dest=/usr/local/src/redis-{{ redis_version }}.tar.gz
   when: not redis_tarball
-  
+
 - name: upload redis
   copy: src={{ redis_tarball }}
-        dest=/usr/local/src/redis-{{ redis_version }}.tar.gz  
+        dest=/usr/local/src/redis-{{ redis_version }}.tar.gz
   when: redis_tarball
 
 - name: extract redis tarball
-  shell: tar xf /usr/local/src/redis-{{ redis_version }}.tar.gz -C /usr/local/src
+  unarchive: src=/usr/local/src/redis-{{ redis_version }}.tar.gz dest=/usr/local/src
          creates=/usr/local/src/redis-{{ redis_version }}
 
 - name: compile redis
-  command: make -j5
-           chdir=/usr/local/src/redis-{{ redis_version }}
-           creates=/usr/local/src/redis-{{ redis_version }}/src/redis-server
+  command: /usr/bin/make -j5
+  args:
+    chdir: /usr/local/src/redis-{{ redis_version }}
+    creates: /usr/local/src/redis-{{ redis_version }}/src/redis-server
 
 - name: create redis install directory
   file: path={{ redis_install_dir }} state=directory

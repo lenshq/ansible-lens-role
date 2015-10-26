@@ -1,0 +1,42 @@
+---
+lens_env:             production
+lens_ssl_enabled:     false
+lens_nginx_conf_tpl:  "{% if lens_ssl_enabled %}site.conf_with_ssl.j2{% else %}site.conf.j2{% endif %}"
+lens_directory:       "{{ projects_directory }}"
+lens_server:          unicorn
+
+lens_deploy_user:
+  {
+    name: dev,
+    home: /home/dev,
+    groups: 'dev',
+    comment: 'lens dev deploy user'
+  }
+
+lens_web_repo:    "git://github.com/lenshq/lens_server.git"
+lens_web_branch:  'master'
+lens_web_domains: ["lenshq.io www.lenshq.io"]
+
+lens_web_databases:
+  - { adapter: postgresql,
+      user: dev,
+      password: '',
+      name: lens_production,
+      role_attr_flags: 'NOSUPERUSER,NOCREATEDB',
+      locale: "en_US.UTF-8",
+      encoding: "UTF-8" }
+
+lens_web_base_dir:       "{{ lens_directory }}/lens"
+lens_web_releases_dir:   "{{ lens_web_base_dir }}/releases"
+lens_web_shared_dir:     "{{ lens_web_base_dir }}/shared"
+lens_web_bundle_dir:     "{{ lens_web_shared_dir }}/vendor/bundle"
+lens_web_uploads_dir:    "{{ lens_web_shared_dir }}/uploads"
+lens_web_log_dir:        "{{ lens_web_shared_dir }}/log"
+lens_web_system_dir:     "{{ lens_web_shared_dir }}/system"
+lens_web_pids_dir:       "{{ lens_web_shared_dir }}/pids"
+lens_web_run_path_dir:   "{{ lens_web_base_dir }}/current"
+lens_web_web_port:       9000
+
+lens_runit_services:
+  - { service: sidekiq,             name: main, queue: "-q default", concurency: 5 }
+  - { service: "{{ lens_server }}", name: web,  port: "{{ lens_web_web_port }}", workers: 8, backlog: 1000 }
