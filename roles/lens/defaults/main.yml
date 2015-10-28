@@ -38,5 +38,9 @@ lens_web_run_path_dir:   "{{ lens_web_base_dir }}/current"
 lens_web_web_port:       9000
 
 lens_runit_services:
-  - { service: sidekiq,             name: main, queue: "-q default", concurency: 5 }
-  - { service: "{{ lens_server }}", name: web,  port: "{{ lens_web_web_port }}", workers: 8, backlog: 1000 }
+  - { service: sidekiq,             name: main,   queue: "-q default", concurency: 5 }
+  - { service: "{{ lens_server }}", name: web,    port: "{{ lens_web_web_port }}", workers: 8, backlog: 1000 }
+  - { service: druid.broker,        name: druid }
+  - { service: druid.coordinator,   name: druid }
+  - { service: druid.historical,    name: druid }
+  - { service: druid.realtime,      name: druid }

@@ -1,0 +1,61 @@
+---
+- name: update apt cache
+  apt: update_cache=yes
+  sudo: true
+
+- name: Install Maven
+  apt:
+    pkg: maven
+    state: present
+
+- name: Install Zookeeper
+  apt:
+    pkg: zookeeper
+    state: present
+
+- name: Create druid user
+  user:
+    name: druid
+    system: yes
+
+- name: Create druid lib directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: druid
+    group: druid
+    mode: 0777
+  with_items:
+    - /var/lib/druid
+    - /usr/local/druid/lib
+    - /usr/local/druid/repository
+
+- git:
+    repo: https://github.com/druid-io/druid.git
+    dest: /tmp/druid
+    version: master
+    force: yes
+    depth: 1
+
+- command: 'mvn -U -B org.codehaus.mojo:versions-maven-plugin:2.1:set -DgenerateBackupPoms=false -DnewVersion=master'
+  args:
+    chdir: /tmp/druid
+
+- command: 'mvn -U -B clean install -DskipTests=true -Dmaven.javadoc.skip=true'
+  args:
+    chdir: /tmp/druid
+
+- command: 'cp /tmp/druid/services/target/druid-services-master-selfcontained.jar /usr/local/druid/lib/'
+  args:
+    creates: /usr/local/druid/lib/druid-services-master-selfcontained.jar
+
+#- command: 'rm -rf /tmp/druid'
+
+- command: 'java "-Ddruid.extensions.coordinates=[\"io.druid.extensions:druid-s3-extensions\",\"io.druid.extensions:postgresql-metadata-storage\"]" \
+      -Ddruid.extensions.localRepository=/usr/local/druid/repository \
+      -Ddruid.extensions.remoteRepositories=[\"file:///tmp/druid/extensions/\",\"file:///root/.m2/repository/\",\"https://repo1.maven.org/maven2/\"] \
+      -cp /usr/local/druid/lib/* \
+      io.druid.cli.Main tools pull-deps'
+  args:
+    chdir: /tmp/druid
+
