@@ -48,8 +48,11 @@
 - name: Symlink new release
   file: src={{ this_release_path }} dest={{ lens_web_run_path_dir }} state=link force=yes
 
-- name: Restart services
-  shell: $SHELL -lc "sudo /usr/bin/sv restart /etc/service/lens-*"
+- name: Restart unicorn
+  shell: $SHELL -lc "sudo /usr/bin/sv restart /etc/service/lens-unicorn-*"
+
+- name: Restart sidekiq
+  shell: $SHELL -lc "sudo /usr/bin/sv restart /etc/service/lens-sidekiq-*"
 
 - name: Cleanup
   shell: "ls -1t {{ lens_web_releases_dir }}|tail -n +{{ keep_releases + 1 }}|xargs rm -rf"
